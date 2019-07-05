@@ -84,7 +84,7 @@ $Monitor3SN = GetMonitorInfo | Select-Object -Index 8
 
 $Monitor1 = $Monitor1 -join ' '
 $Monitor2 = $Monitor2 -join ' '
-$Monitor2 = $Monitor2 -join ' '
+$Monitor3 = $Monitor3 -join ' '
 
 # Type of computer
 $Chassis = Get-CimInstance -ClassName Win32_SystemEnclosure -Namespace 'root\CIMV2' -Property ChassisTypes | Select-Object -ExpandProperty ChassisTypes
