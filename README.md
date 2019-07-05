@@ -7,14 +7,14 @@ If hostname exists in the CSV file, it will overwrite it with the latest informa
  It is designed to be run as a login script and/or a scheduled/immediate task run by a domain user. Elevated privileges are not required.
 #  Screenshots
 Here is an example of what the script will output:
-![](https://raw.githubusercontent.com/sbirdsill/PowerShell-PC-Inventory/master/Sample.png)
+![](https://raw.githubusercontent.com/sbirdsill/PowerShell-PC-Inventory/master/Images/Sample.png)
 In Excel, I formatted the CSV file as a table so that I could filter out the data I need.
 
 While the script is designed to be run automatically by way of a login script or a scheduled task, you can also run it manually. Here's an example of what that would look like:
-![](https://raw.githubusercontent.com/sbirdsill/PowerShell-PC-Inventory/master/Run.png)
+![](https://raw.githubusercontent.com/sbirdsill/PowerShell-PC-Inventory/master/Images/Run.png)
 
 If the inventory does not run successfully, it outputs errors to a log file. Here's an example of the error log file:
-![](https://raw.githubusercontent.com/sbirdsill/PowerShell-PC-Inventory/master/ErrorLog.png)
+![](https://raw.githubusercontent.com/sbirdsill/PowerShell-PC-Inventory/master/Images/ErrorLog.png)
 
 # Setup
 By default, the CSV file and error log is set to write to the current working directory ($pwd), but it's recommended that you set this value to a location where all users will have full control over the CSV file.
