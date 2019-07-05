@@ -63,3 +63,6 @@ It works in the following order:
 
 ### Which version of PowerShell is required?
 PowerShell 3 or later is required. I tested it on Windows 7 with PowerShell 3 and Windows 10 with PowerShell 5.1 and it worked on both.
+
+### Should I deploy the GPO as a Computer Configuration or a User Configuration?
+In my testing, it has only worked under user configuration. If you managed to get it to work with computer configuration, I'm interested in hearing how you did it.
