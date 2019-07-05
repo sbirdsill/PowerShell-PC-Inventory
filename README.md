@@ -13,11 +13,11 @@ In Excel, I formatted the CSV file as a table so that I could filter out the dat
 While the script is designed to be run automatically by way of a login script or a scheduled task, you can also run it manually. Here's an example of what that would look like:
 ![](https://raw.githubusercontent.com/sbirdsill/PowerShell-PC-Inventory/master/Run.png)
 
-If the inventory does not run sucessfully, it outputs erros to a log file. Here's an example of the error log file:
+If the inventory does not run successfully, it outputs errors to a log file. Here's an example of the error log file:
 ![](https://raw.githubusercontent.com/sbirdsill/PowerShell-PC-Inventory/master/ErrorLog.png)
 
 # Setup
-By default, the CSV file and error log is set to write to the current working directory ($pwd), but it's reccommended that you set this value to a location where all users will have full control over the CSV file.
+By default, the CSV file and error log is set to write to the current working directory ($pwd), but it's recommended that you set this value to a location where all users will have full control over the CSV file.
 
 If the CSV file does not exist, the script will attempt to create it and set the required permissions on it automatically, however it's recommended that you first create the CSV file (Inventory.csv by default) manually and ensure the proper permissions are set on it.
 
@@ -29,7 +29,7 @@ Here are some ways to deploy this script:
 
 # Potential Q&A's
 ### What if I have more than two GPUs or more than three monitors?
-The script can easily be modifed to accomodate this.
+The script can easily be modified to accommodate this.
 
 For example, if you have three GPUs, simply modify that part of the script to contain the following:
 
@@ -51,8 +51,8 @@ The same logic applies to the monitor part of the script. If you have four monit
 	Add-Member -InputObject $infoObject -MemberType NoteProperty -Name "Monitor 4" -Value $Monitor4
     Add-Member -InputObject $infoObject -MemberType NoteProperty -Name "Monitor 4 Serial Number" -Value $Monitor4SN
 
-### Some systems are reporting errors but the inventory file has full control enabled
-This is likely caused by another system that is running the inventory at the same time, causing the CSV file to be locked for editing. It shouldn't be a concern as long as the system has an oppurtunity to run the script again.
+### Some systems are reporting errors, but the inventory file has full control enabled
+This is likely caused by another system that is running the inventory at the same time, causing the CSV file to be locked for editing. It shouldn't be a concern as long as the system has an opportunity to run the script again.
 
 ### How exactly does the script work?
 It works in the following order:
