@@ -1,7 +1,11 @@
+param(
+  [switch]$c
+)
+
 # PowerShell CSV PC Inventory Script
 # PowerShell-PC-Inventory.ps1
-# Version 1.1
-# Last updated: Jul-3-2019
+# Version 1.2
+# Last updated: Sep-4-2023
 #
 # This PowerShell script will collect the Date of inventory, IP and MAC address, serial number, model, CPU, RAM, total storage size, GPU(s), OS, OS build, logged in user, and the attached monitor(s) of a computer.
 # After it collects that information, it is outputted to a CSV file. It will first check the CSV file (if it exists) to see if the hostname already exists in the file. 
@@ -10,11 +14,54 @@
 #
 # IMPORTANT: Parts that may need be modified for your environment are double commented (##). The rest of the script can safely be left as is.
 
-## CSV File Location (If this doesn't exist, the script will attempt to create it. Users will need full control of the file.)
-$csv = "$pwd\Inventory.csv"
+## CSV File Location (If the CSV file doesn't exist, the script will attempt to create it. Users will need full control of the file.)
+## Also, make sure to create the InventoryOutput folder the CSV files will reside in. This script will not create folders automatically.
+$csv = "$pwd\InventoryOutput\$env:computername-Inventory.csv"
 
 ## Error log path (Optional but recommended. If this doesn't exist, the script will attempt to create it. Users will need full control of the file.)
 $ErrorLogPath = "$pwd\PowerShell-PC-Inventory-Error-Log.log"
+
+function ConcatenateInventory {
+  # If the -c flag is specified, this function will consolidate the inventory files into a presentable report.
+  # It works by concatenating the individual inventory CSV files into one CSV file, then removing any duplicate lines to prevent duplicating the headers.
+
+  $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+
+  # Specify the folder containing the inventory CSV files
+  $csvFolderPath = Read-Host "Please specify the full path of your Inventory Output folder"
+
+  # Specify the output file path for the inventory report
+  $outputFilePath = Read-Host "Please specify the full path of where you'd like to export the final inventory report to"
+
+  # Initialize an empty hashtable to keep track of unique rows
+  $uniqueRows = @{}
+
+  # Loop through each CSV file in the folder
+  Get-ChildItem -Path $csvFolderPath -Filter *.csv | ForEach-Object {
+    $csvFile = $_.FullName
+
+    # Import the CSV file
+    $data = Import-Csv -Path $csvFile
+
+    # Loop through each row in the CSV and add it to the hashtable
+    foreach ($row in $data) {
+      $rowKey = $row | Out-String
+      if (-not $uniqueRows.ContainsKey($rowKey)) {
+        $uniqueRows[$rowKey] = $row
+      }
+    }
+  }
+
+  # Export the unique rows to the output CSV file
+  $uniqueRows.Values | Export-Csv -Path "$outputFilePath\PowerShell-PC-Inventory-Report-$timestamp.csv" -NoTypeInformation -Force
+
+  Write-Host "Inventory consolidation complete. The inventory report is saved to $outputFilePath\PowerShell-PC-Inventory-Report-$timestamp.csv"
+  exit
+}
+
+if ($c) {
+  ConcatenateInventory
+}
 
 Write-Host "Gathering inventory information..."
 
@@ -87,80 +134,41 @@ $Monitor2 = $Monitor2 -join ' '
 $Monitor3 = $Monitor3 -join ' '
 
 # Type of computer
-$Chassis = Get-CimInstance -ClassName Win32_SystemEnclosure -Namespace 'root\CIMV2' -Property ChassisTypes | Select-Object -ExpandProperty ChassisTypes
 # Values are from https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-systemenclosure
-if ($Chassis -eq "1") {
-  $Chassis = "Other"
+$Chassis = Get-CimInstance -ClassName Win32_SystemEnclosure -Namespace 'root\CIMV2' -Property ChassisTypes | Select-Object -ExpandProperty ChassisTypes
+
+$ChassisDescription = switch ($Chassis) {
+  "1" { "Other" }
+  "2" { "Unknown" }
+  "3" { "Desktop" }
+  "4" { "Low Profile Desktop" }
+  "5" { "Pizza Box" }
+  "6" { "Mini Tower" }
+  "7" { "Tower" }
+  "8" { "Portable" }
+  "9" { "Laptop" }
+  "10" { "Notebook" }
+  "11" { "Hand Held" }
+  "12" { "Docking Station" }
+  "13" { "All in One" }
+  "14" { "Sub Notebook" }
+  "15" { "Space-Saving" }
+  "16" { "Lunch Box" }
+  "17" { "Main System Chassis" }
+  "18" { "Expansion Chassis" }
+  "19" { "SubChassis" }
+  "20" { "Bus Expansion Chassis" }
+  "21" { "Peripheral Chassis" }
+  "22" { "Storage Chassis" }
+  "23" { "Rack Mount Chassis" }
+  "24" { "Sealed-Case PC" }
+  "30" { "Tablet" }
+  "31" { "Convertible" }
+  "32" { "Detachable" }
+  default { "Unknown" }
 }
-if ($Chassis -eq "2") {
-  $Chassis = "Unknown"
-}
-if ($Chassis -eq "3") {
-  $Chassis = "Desktop"
-}
-if ($Chassis -eq "4") {
-  $Chassis = "Low Profile Desktop"
-}
-if ($Chassis -eq "5") {
-  $Chassis = "Pizza Box"
-}
-if ($Chassis -eq "6") {
-  $Chassis = "Mini Tower"
-}
-if ($Chassis -eq "7") {
-  $Chassis = "Tower"
-}
-if ($Chassis -eq "8") {
-  $Chassis = "Portable"
-}
-if ($Chassis -eq "9") {
-  $Chassis = "Laptop"
-}
-if ($Chassis -eq "10") {
-  $Chassis = "Notebook"
-}
-if ($Chassis -eq "11") {
-  $Chassis = "Hand Held"
-}
-if ($Chassis -eq "12") {
-  $Chassis = "Docking Station"
-}
-if ($Chassis -eq "13") {
-  $Chassis = "All in One"
-}
-if ($Chassis -eq "14") {
-  $Chassis = "Sub Notebook"
-}
-if ($Chassis -eq "15") {
-  $Chassis = "Space-Saving"
-}
-if ($Chassis -eq "16") {
-  $Chassis = "Lunch Box"
-}
-if ($Chassis -eq "17") {
-  $Chassis = "Main System Chassis"
-}
-if ($Chassis -eq "18") {
-  $Chassis = "Expansion Chassis"
-}
-if ($Chassis -eq "19") {
-  $Chassis = "SubChassis"
-}
-if ($Chassis -eq "20") {
-  $Chassis = "Bus Expansion Chassis"
-}
-if ($Chassis -eq "21") {
-  $Chassis = "Peripheral Chassis"
-}
-if ($Chassis -eq "22") {
-  $Chassis = "Storage Chassis"
-}
-if ($Chassis -eq "23") {
-  $Chassis = "Rack Mount Chassis"
-}
-if ($Chassis -eq "24") {
-  $Chassis = "Sealed-Case PC"
-}
+
+$ChassisDescription
 
 # Function to write the inventory to the CSV file
 function OutputToCSV {
@@ -173,7 +181,7 @@ function OutputToCSV {
   Add-Member -InputObject $infoObject -MemberType NoteProperty -Name "Hostname" -Value $env:computername
   Add-Member -InputObject $infoObject -MemberType NoteProperty -Name "MAC Address" -Value $MAC
   Add-Member -InputObject $infoObject -MemberType NoteProperty -Name "User" -Value $Username
-  Add-Member -InputObject $infoObject -MemberType NoteProperty -Name "Type" -Value $Chassis
+  Add-Member -InputObject $infoObject -MemberType NoteProperty -Name "Type" -Value $ChassisDescription
   Add-Member -InputObject $infoObject -MemberType NoteProperty -Name "Serial Number/Service Tag" -Value $SN
   Add-Member -InputObject $infoObject -MemberType NoteProperty -Name "Model" -Value $Model
   Add-Member -InputObject $infoObject -MemberType NoteProperty -Name "CPU" -Value $CPU
