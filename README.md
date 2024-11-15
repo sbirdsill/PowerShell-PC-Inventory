@@ -74,3 +74,7 @@ Here are some ways to deploy this script:
 * A scheduled or immediate task
 * Add it to shell:startup
 * RMM software such as Datto or ConnectWise Automate
+
+ ### What if I don't have a on-premises file share?
+
+Outputting the CSV file to a synced SharePoint site or shared folder shortcut in OneDrive should be possible, however I have not tested this yet. I will confirm this at a later date.
