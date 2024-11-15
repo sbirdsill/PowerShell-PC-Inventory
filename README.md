@@ -56,7 +56,7 @@ The same logic applies to the monitor part of the script. If you have four monit
 It works in the following order:
 1. First, it collects information about the system using CIM.
 2. It will output the collected information to a CSV file.
-3. If it is run again, it will replace its old CSV file (identified by the hostname identified in the file name) with a new one
+3. If it is run again, it will replace its old CSV file (identified by the hostname identified in the file name) with a new one.
 4. After some time has elapsed, and all devices have had a chance to populate the output folder with their inventory files, you may run the -c parameter to consolidate all CSV files into one report.
 
 ### Which version of PowerShell is required?
@@ -75,6 +75,6 @@ Here are some ways to deploy this script:
 * Add it to shell:startup
 * RMM software such as Datto or ConnectWise Automate
 
- ### What if I don't have a on-premises file share?
+ ### What if I don't have an on-premises file share?
 
 Outputting the CSV file to a synced SharePoint site or shared folder shortcut in OneDrive should be possible, however I have not tested this yet. I will confirm this at a later date.
