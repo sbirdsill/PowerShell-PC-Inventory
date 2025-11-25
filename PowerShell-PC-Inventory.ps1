@@ -79,16 +79,41 @@ $Date = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
 # Installed apps
 if ($checkInstalledApps -eq 1) {
-  # Get list of installed applications from registry
-  $installedApps = Get-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" `
-     -ErrorAction SilentlyContinue |
-  Select-Object -ExpandProperty DisplayName
-
-  # Filter out empty entries and join them into a comma-separated list
-  $appsList = ($installedApps | Where-Object { $_ -ne $null }) -join "`n "
-
+  # Modified from Test-InstalledSoftware function from https://github.com/darimm/RMMFunctions
+  $32BitPath = "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
+  $64BitPath = "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
+  # Empty array to store applications
+  $Apps = @()
+  # Retrieve globally installed applications
+  $Apps += Get-ItemProperty "HKLM:\$32BitPath" | Where-Object { $null -ne $_.DisplayName }
+  $Apps += Get-ItemProperty "HKLM:\$64BitPath" | Where-Object { $null -ne $_.DisplayName }
+  # Retrieve user profile applications
+  $AllProfiles = Get-CimInstance Win32_UserProfile |
+  Select-Object LocalPath, SID, Loaded, Special |
+  Where-Object { $_.SID -like "S-1-5-21-*" -or $_.SID -like "S-1-12-1-*" } # 5-21 regular users, 12-1 is AzureAD users
+  $MountedProfiles = $AllProfiles | Where-Object { $_.Loaded -eq $true }
+  $UnmountedProfiles = $AllProfiles | Where-Object { $_.Loaded -eq $false }
+  $MountedProfiles | ForEach-Object {
+    $Apps += Get-ItemProperty -Path "Registry::\HKEY_USERS\$($_.SID)\$32BitPath" | Where-Object { $null -ne $_.DisplayName }
+    $Apps += Get-ItemProperty -Path "Registry::\HKEY_USERS\$($_.SID)\$64BitPath" | Where-Object { $null -ne $_.DisplayName }
+  }
+  $UnmountedProfiles | ForEach-Object {
+    $Hive = "$($_.LocalPath)\NTUSER.DAT"
+    if (Test-Path $Hive) {
+      REG LOAD HKU\temp $Hive >$null
+      $Apps += Get-ItemProperty -Path "Registry::\HKEY_USERS\temp\$32BitPath" | Where-Object { $null -ne $_.DisplayName }
+      $Apps += Get-ItemProperty -Path "Registry::\HKEY_USERS\temp\$64BitPath" | Where-Object { $null -ne $_.DisplayName }
+      # Run manual GC to allow hive to be unmounted
+      [GC]::Collect()
+      [GC]::WaitForPendingFinalizers()
+      REG UNLOAD HKU\temp >$null
+    }
+  }
+  $Apps = $Apps | Sort-Object DisplayName -Unique
   # Output the variable
-  $appsList
+  foreach ($App in $Apps) {
+    $appslist += "$($App.DisplayName) $($App.DisplayVersion)`n"
+  }
 } else {
   $appsList = "N/A"
 }
