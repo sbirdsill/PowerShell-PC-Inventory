@@ -139,9 +139,6 @@ $GPU1 = GetGPUInfo | Select-Object -Index 1
 # OS
 $OS = Get-CimInstance -Class Win32_OperatingSystem
 
-# OS Build
-$OSBuild = (Get-Item "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion").GetValue('ReleaseID')
-
 # Up time
 # Get the last boot time of the system
 $lastBootTime = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
