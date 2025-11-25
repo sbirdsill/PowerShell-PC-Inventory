@@ -114,6 +114,7 @@ if ($checkInstalledApps -eq 1) {
   foreach ($App in $Apps) {
     $appslist += "$($App.DisplayName) $($App.DisplayVersion)`n"
   }
+  $appslist
 } else {
   $appsList = "N/A"
 }
