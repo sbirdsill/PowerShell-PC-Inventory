@@ -4,8 +4,8 @@ param(
 
 # PowerShell CSV PC Inventory Script
 # PowerShell-PC-Inventory.ps1
-# Version 1.3
-# Last updated: Nov-14-2024
+# Version 1.4
+# Last updated: Jan-19-2026
 #
 # This PowerShell script will collect the Date of inventory, host name, IP/MAC, username (run as user), type, serial number, model, BIOS info, CPU, RAM, storage (OS drive), GPU(s), OS and version, up time, monitor(s), and installed apps (optional) on a computer. 
 # After it collects that information, it is outputted to a CSV file.
@@ -77,7 +77,7 @@ Write-Host "Gathering inventory information..."
 # Date
 $Date = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
-# Installed apps
+# Installed apps (thank you to https://github.com/IsaacGood)
 if ($checkInstalledApps -eq 1) {
   # Modified from Test-InstalledSoftware function from https://github.com/darimm/RMMFunctions
   $32BitPath = "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
