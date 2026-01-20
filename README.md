@@ -1,5 +1,5 @@
 # PowerShell CSV PC Inventory
-This PowerShell script will collect the Date of inventory, host name, IP/MAC, username (run as user), type, serial number, model, BIOS info, CPU, RAM, storage (OS drive), GPU(s), OS and version, up time, monitor(s), and installed apps (optional) on a computer. 
+This PowerShell script will collect the Date of inventory, host name, IP/MAC, username (run as user), type, serial number, model, BIOS info, CPU, RAM, storage (OS drive), GPU(s), OS and version, up time, monitor(s), and installed apps on a computer. 
 
 After it collects that information, it is outputted to a CSV file. The -c parameter gives you the option to consolidate all CSV files into one CSV file, resulting in a presentable report.
 
@@ -74,7 +74,8 @@ Here are some ways to deploy this script:
 * A scheduled or immediate task
 * Add it to shell:startup
 * RMM software such as Datto or ConnectWise Automate
+* MDM service such as Intune
 
- ### What if I don't have an on-premises file share?
+ ### Contributions / Support
 
-Outputting the CSV file to a synced SharePoint site or shared folder shortcut in OneDrive should be possible, however I have not tested this yet. I will confirm this at a later date.
+Your contributions to improve the script are most certainly welcome, so feel free to make a pull request if you have anything to add. The design philosophy is to make it easy to run "out of the box" for admins with limited scripting experience or time (I'm sure we can all relate to that last one). If your contributions maintain that criteria, I'm happy to merge it. If you discovered a bug, have a feature request or need assistance with the script, feel free to open an Issue and I will do my best to help. Support is provided on a "best effort, use at your own risk" basis.
